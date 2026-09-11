@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naturlife</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f1f8f2;
+color:#183b20;
+}
+
+.header{
+background:#2e7d32;
+color:white;
+text-align:center;
+padding:25px 15px;
+}
+
+.logo{
+width:85px;
+height:85px;
+object-fit:contain;
+background:white;
+border-radius:50%;
+padding:5px;
+}
+
+h1{
+margin:10px 0 5px;
+font-size:30px;
+}
+
+.container{
+padding:18px;
+max-width:600px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:20px;
+margin-bottom:16px;
+border-radius:18px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+h2{
+margin-top:0;
+font-size:21px;
+}
+
+label{
+font-weight:bold;
+display:block;
+margin-top:12px;
+}
+
+input,select{
+width:100%;
+padding:13px;
+margin-top:7px;
+border:1px solid #ccc;
+border-radius:10px;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:12px;
+border:0;
+border-radius:12px;
+background:#2e7d32;
+color:white;
+font-size:16px;
+font-weight:bold;
+}
+
+.task{
+padding:14px;
+margin:10px 0;
+border-radius:12px;
+background:#eef7ed;
+border-left:5px solid #2e7d32;
+}
+
+.harvest{
+background:#fff8e1;
+border-left-color:#f9a825;
+}
+
+#plan{
+display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+<img src="naturlife-logo.jpeg"
+class="logo"
+onerror="this.style.display='none'">
+
+<h1>Naturlife</h1>
+
+<p>Smart Agriculture Guide 🌱</p>
+
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<h2>🌱 Select Any Crop</h2>
+
+<select id="crop">
+
+<option value="">Select Crop</option>
+
+<option value="rice">Rice</option>
+<option value="chilli">Chilli</option>
+<option value="tomato">Tomato</option>
+<option value="brinjal">Brinjal</option>
+<option value="cabbage">Cabbage</option>
+<option value="carrot">Carrot</option>
+<option value="onion">Onion</option>
+<option value="ginger">Ginger</option>
+<option value="watermelon">Watermelon</option>
+<option value="cucumber">Cucumber</option>
+<option value="okra">Okra</option>
+<option value="beans">Beans</option>
+<option value="maize">Maize</option>
+<option value="potato">Potato</option>
+<option value="microgreens">Microgreens</option>
+<option value="other">➕ Other Crop</option>
+
+</select>
+
+<input id="otherCrop"
+placeholder="Enter crop name"
+style="display:none">
+
+</div>
+
+<div class="card">
+
+<h2>📍 Farm Location</h2>
+
+<input id="location"
+placeholder="Enter village / town / district">
+
+<button onclick="getLocation()">
+📍 Use My GPS Location
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>📅 Planting Information</h2>
+
+<label>Planting / Seeding Date</label>
+
+<input type="date" id="plantingDate">
+
+<label>Land Area</label>
+
+<input
+type="text"
+id="area"
+placeholder="Example: 1 acre">
+
+<button onclick="createPlan()">
+🌱 Create Smart Crop Plan
+</button>
+
+</div>
+
+<div id="plan">
+
+<div class="card">
+
+<h2>📋 Naturlife Crop Plan</h2>
+
+<p id="summary"></p>
+
+</div>
+
+<div class="card">
+
+<h2>📅 Farming Timeline</h2>
+
+<div id="tasks"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const crops={
+
+rice:{name:"Rice",harvest:120,fertilizer:20,water:7},
+
+chilli:{name:"Chilli",harvest:90,fertilizer:20,water:3},
+
+tomato:{name:"Tomato",harvest:75,fertilizer:15,water:2},
+
+brinjal:{name:"Brinjal",harvest:80,fertilizer:15,water:3},
+
+cabbage:{name:"Cabbage",harvest:70,fertilizer:20,water:2},
+
+carrot:{name:"Carrot",harvest:75,fertilizer:20,water:3},
+
+onion:{name:"Onion",harvest:100,fertilizer:20,water:4},
+
+ginger:{name:"Ginger",harvest:240,fertilizer:30,water:4},
+
+watermelon:{name:"Watermelon",harvest:80,fertilizer:20,water:2},
+
+cucumber:{name:"Cucumber",harvest:60,fertilizer:15,water:2},
+
+okra:{name:"Okra",harvest:60,fertilizer:20,water:3},
+
+beans:{name:"Beans",harvest:55,fertilizer:15,water:2},
+
+maize:{name:"Maize",harvest:100,fertilizer:25,water:5},
+
+potato:{name:"Potato",harvest:90,fertilizer:20,water:4},
+
+microgreens:{name:"Microgreens",harvest:10,fertilizer:5,water:1}
+
+};
+
+document.getElementById("crop").onchange=function(){
+
+document.getElementById("otherCrop").style.display=
+this.value==="other"?"block":"none";
+
+};
+
+function getLocation(){
+
+if(!navigator.geolocation){
+
+alert("GPS is not available.");
+
+return;
+}
+
+navigator.geolocation.getCurrentPosition(
+
+function(position){
+
+document.getElementById("location").value=
+"GPS: "+
+position.coords.latitude.toFixed(5)+
+", "+
+position.coords.longitude.toFixed(5);
+
+},
+
+function(){
+
+alert("GPS permission unavailable. Please enter location manually.");
+
+}
+
+);
+
+}
+
+function addDays(date,days){
+
+let d=new Date(date);
+
+d.setDate(d.getDate()+days);
+
+return d;
+
+}
+
+function formatDate(date){
+
+return date.toLocaleDateString("en-GB");
+
+}
+
+function createPlan(){
+
+let key=document.getElementById("crop").value;
+
+let startValue=document.getElementById("plantingDate").value;
+
+let location=document.getElementById("location").value;
+
+let area=document.getElementById("area").value;
+
+if(!key){
+
+alert("Please select a crop.");
+
+return;
+}
+
+if(!startValue){
+
+alert("Please select planting date.");
+
+return;
+}
+
+let data;
+
+if(key==="other"){
+
+let name=document.getElementById("otherCrop").value;
+
+if(!name){
+
+alert("Please enter crop name.");
+
+return;
+}
+
+data={
+name:name,
+harvest:90,
+fertilizer:20,
+water:3
+};
+
+}else{
+
+data=crops[key];
+
+}
+
+let start=new Date(startValue);
+
+let harvest=addDays(start,data.harvest);
+
+let fertilizer=addDays(start,data.fertilizer);
+
+let pest=addDays(start,14);
+
+let transplant=addDays(start,25);
+
+document.getElementById("plan").style.display="block";
+
+document.getElementById("summary").innerHTML=
+
+"<b>🌱 Crop:</b> "+data.name+
+"<br><b>📍 Location:</b> "+(location||"Not added")+
+"<br><b>📏 Land:</b> "+(area||"Not added")+
+"<br><b>📅 Planting:</b> "+formatDate(start)+
+"<br><br><b>🧺 Estimated Harvest:</b> "+
+formatDate(harvest);
+
+let html="";
+
+html+=`
+<div class="task">
+<strong>🌱 Planting Day</strong>
+${formatDate(start)}
+</div>`;
+
+html+=`
+<div class="task">
+<strong>💧 Water Management</strong>
+Check soil moisture regularly.
+Prototype interval: every ${data.water} day(s).
+</div>`;
+
+html+=`
+<div class="task">
+<strong>🐛 Pest & Disease Check</strong>
+First detailed check: ${formatDate(pest)}
+</div>`;
+
+html+=`
+<div class="task">
+<strong>🌿 Fertilizer Check</strong>
+Planned around ${formatDate(fertilizer)}
+</div>`;
+
+html+=`
+<div class="task">
+<strong>🌱 Crop Development Check</strong>
+Review crop growth around ${formatDate(transplant)}
+</div>`;
+
+html+=`
+<div class="task harvest">
+<strong>🧺 Estimated Harvest</strong>
+${formatDate(harvest)}
+<br>
+Confirm maturity before harvesting.
+</div>`;
+
+document.getElementById("tasks").innerHTML=html;
+
+}
+
+</script>
+
+</body>
+</html>
