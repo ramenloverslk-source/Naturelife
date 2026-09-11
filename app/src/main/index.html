@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Naturlife Smart Agriculture</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f8f2;
+    color: #183b20;
+}
+
+.header {
+    background: #2e7d32;
+    color: white;
+    text-align: center;
+    padding: 25px 15px;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    background: white;
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.header h1 {
+    margin: 10px 0 5px;
+    font-size: 30px;
+}
+
+.header p {
+    margin: 0;
+}
+
+.container {
+    padding: 18px;
+    max-width: 600px;
+    margin: auto;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 16px;
+    border-radius: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 21px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 12px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 13px;
+    margin-top: 7px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 12px;
+    background: #2e7d32;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+button.secondary {
+    background: #558b2f;
+}
+
+.task {
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 12px;
+    background: #eef7ed;
+    border-left: 5px solid #2e7d32;
+}
+
+.task strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.harvest {
+    background: #fff8e1;
+    border-left: 5px solid #f9a825;
+}
+
+#plan {
+    display: none;
+}
+
+.small {
+    color: #666;
+    font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <img
+        src="naturlife-logo.jpeg"
+        class="logo"
+        onerror="this.style.display='none'"
+    >
+
+    <h1>Naturlife</h1>
+    <p>Smart Agriculture Guide 🌱</p>
+
+</div>
+
+<div class="container">
+
+<!-- CROP SELECTION -->
+
+<div class="card">
+
+<h2>🌱 Select Your Crop</h2>
+
+<label>Crop</label>
+
+<select id="crop">
+
+<option value="">Select any crop</option>
+
+<option value="rice">Rice</option>
+<option value="chilli">Chilli</option>
+<option value="tomato">Tomato</option>
+<option value="brinjal">Brinjal</option>
+<option value="cabbage">Cabbage</option>
+<option value="carrot">Carrot</option>
+<option value="onion">Onion</option>
+<option value="ginger">Ginger</option>
+<option value="watermelon">Watermelon</option>
+<option value="microgreens">Microgreens</option>
+<option value="cucumber">Cucumber</option>
+<option value="okra">Okra</option>
+<option value="beans">Beans</option>
+<option value="maize">Maize</option>
+<option value="potato">Potato</option>
+
+<option value="other">➕ Other Crop</option>
+
+</select>
+
+<input
+    type="text"
+    id="otherCrop"
+    placeholder="Enter your crop name"
+    style="display:none;"
+>
+
+</div>
+
+
+<!-- LOCATION -->
+
+<div class="card">
+
+<h2>📍 Farm Location</h2>
+
+<label>Location</label>
+
+<input
+    type="text"
+    id="location"
+    placeholder="Enter village / town / district"
+>
+
+<button onclick="getLocation()">
+📍 Use My GPS Location
+</button>
+
+<p class="small">
+GPS location can be used later for weather-based farming advice.
+</p>
+
+</div>
+
+
+<!-- PLANTING DATE -->
+
+<div class="card">
+
+<h2>📅 Planting Information</h2>
+
+<label>Planting / Seeding Date</label>
+
+<input
+    type="date"
+    id="plantingDate"
+>
+
+<label>Land Area (optional)</label>
+
+<input
+    type="number"
+    id="area"
+    placeholder="Example: 1 acre"
+>
+
+<button onclick="createPlan()">
+🌱 Create Smart Crop Plan
+</button>
+
+</div>
+
+
+<!-- PLAN -->
+
+<div id="plan">
+
+<div class="card">
+
+<h2>📋 Your Naturlife Crop Plan</h2>
+
+<p id="summary"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>🌿 Farming Timeline</h2>
+
+<div id="tasks"></div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/*
+Crop growing information.
+These are starter estimates for the prototype.
+They should be replaced with crop/variety/location-specific
+recommendations before commercial use.
+*/
+
+const cropData = {
+
+rice: {
+    name: "Rice",
+    harvest: 120,
+    fertilizer: 20,
+    water: 7
+},
+
+chilli: {
+    name: "Chilli",
+    harvest: 90,
+    fertilizer: 20,
+    water: 3
+},
+
+tomato: {
+    name: "Tomato",
+    harvest: 75,
+    fertilizer: 15,
+    water: 2
+},
+
+brinjal: {
+    name: "Brinjal",
+    harvest: 80,
+    fertilizer: 15,
+    water: 3
+},
+
+cabbage: {
+    name: "Cabbage",
+    harvest: 70,
+    fertilizer: 20,
+    water: 2
+},
+
+carrot: {
+    name: "Carrot",
+    harvest: 75,
+    fertilizer: 20,
+    water: 3
+},
+
+onion: {
+    name: "Onion",
+    harvest: 100,
+    fertilizer: 20,
+    water: 4
+},
+
+ginger: {
+    name: "Ginger",
+    harvest: 240,
+    fertilizer: 30,
+    water: 4
+},
+
+watermelon: {
+    name: "Watermelon",
+    harvest: 80,
+    fertilizer: 20,
+    water: 2
+},
+
+microgreens: {
+    name: "Microgreens",
+    harvest: 10,
+    fertilizer: 5,
+    water: 1
+},
+
+cucumber: {
+    name: "Cucumber",
+    harvest: 60,
+    fertilizer: 15,
+    water: 2
+},
+
+okra: {
+    name: "Okra",
+    harvest: 60,
+    fertilizer: 20,
+    water: 3
+},
+
+beans: {
+    name: "Beans",
+    harvest: 55,
+    fertilizer: 15,
+    water: 2
+},
+
+maize: {
+    name: "Maize",
+    harvest: 100,
+    fertilizer: 25,
+    water: 5
+},
+
+potato: {
+    name: "Potato",
+    harvest: 90,
+    fertilizer: 20,
+    water: 4
+}
+
+};
+
+
+// Show other crop input
+
+document.getElementById("crop").addEventListener("change", function() {
+
+    const other = document.getElementById("otherCrop");
+
+    if (this.value === "other") {
+        other.style.display = "block";
+    } else {
+        other.style.display = "none";
+    }
+
+});
+
+
+// GPS
+
+function getLocation() {
+
+    if (!navigator.geolocation) {
+
+        alert("GPS is not supported on this device.");
+
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            document.getElementById("location").value =
+                "GPS: " + lat.toFixed(5) +
+                ", " + lon.toFixed(5);
+
+        },
+
+        function() {
+
+            alert(
+                "GPS permission was not available. " +
+                "Please enter your farm location manually."
+            );
+
+        }
+
+    );
+
+}
+
+
+// Add days to date
+
+function addDays(date, days) {
+
+    const result = new Date(date);
+
+    result.setDate(result.getDate() + days);
+
+    return result;
+
+}
+
+
+// Format date
+
+function formatDate(date) {
+
+    return date.toLocaleDateString(
+        "en-GB",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+// Create farming plan
+
+function createPlan() {
+
+    const cropKey =
+        document.getElementById("crop").value;
+
+    const plantingDate =
+        document.getElementById("plantingDate").value;
+
+    const location =
+        document.getElementById("location").value;
+
+    const area =
+        document.getElementById("area").value;
+
+
+    if (!cropKey) {
+
+        alert("Please select a crop.");
+
+        return;
+    }
+
+
+    if (!plantingDate) {
+
+        alert("Please select planting date.");
+
+        return;
+    }
+
+
+    let data;
+
+
+    if (cropKey === "other") {
+
+        const name =
+            document.getElementById("otherCrop").value;
+
+        if (!name) {
+
+            alert("Please enter your crop name.");
+
+            return;
+        }
+
+        data = {
+
+            name: name,
+
+            harvest: 90,
+
+            fertilizer: 20,
+
+            water: 3
+
+        };
+
+    } else {
+
+        data = cropData[cropKey];
+
+    }
+
+
+    const start =
+        new Date(plantingDate);
+
+
+    const harvest =
+        addDays(start, data.harvest);
+
+
+    const fertilizer1 =
+        addDays(start, data.fertilizer);
+
+
+    const fertilizer2 =
+        addDays(start, data.fertilizer + 30);
+
+
+    const pestCheck =
+        addDays(start, 14);
+
+
+    const nurseryCheck =
+        addDays(start, 21);
+
+
+    document.getElementById("plan").style.display =
+        "block";
+
+
+    document.getElementById("summary").innerHTML =
+
+        "<b>🌱 Crop:</b> " + data.name +
+
+        "<br><b>📍 Location:</b> " +
+        (location || "Not added") +
+
+        "<br><b>📏 Land Area:</b> " +
+        (area || "Not added") +
+
+        "<br><b>📅 Planting Date:</b> " +
+        formatDate(start) +
+
+        "<br><br>" +
+
+        "🧺 <b>Estimated Harvest:</b> " +
+        formatDate(harvest);
+
+
+    let html = "";
+
+
+    html +=
+
+        '<div class="task">' +
+
+        '<strong>🌱 Day 0 — Planting</strong>' +
+
+        'Plant / sow your crop on ' +
+
+        formatDate(start) +
+
+        '.</div>';
+
+
+    html +=
+
+        '<div class="task">' +
+
+        '<strong>💧 Water Management</strong>' +
+
+        'Monitor soil moisture regularly. ' +
+
+        'Suggested prototype interval: every ' +
+
+        data.water +
+
+        ' day(s).' +
+
+        '</div>';
+
+
+    html +=
+
+        '<div class="task">' +
+
+        '<strong>🐛 Pest & Disease Check</strong>' +
+
+        'First detailed inspection: ' +
+
+        formatDate(pestCheck) +
+
+        '.</div>';
+
+
+    html +=
+
+        '<div class="task">' +
+
+        '<strong>🌿 Fertilizer Check 01</strong>' +
+
+        'Planned around ' +
+
+        formatDate(fertilizer1) +
+
+        '.</div>';
+
+
+    html +=
+
+        '<div class="task">' +
+
+        '<strong>🌿 Fertilizer Check 02</strong>' +
+
+        'Planned around ' +
+
+        formatDate(fertilizer2) +
+
+        '.</div>';
+
+
+    html +=
+
+        '<div class="task">' +
+
+        '<strong>🌱 Crop Development Check</strong>' +
+
+        'Review plant growth around ' +
+
+        formatDate(nurseryCheck) +
+
+        '.</div>';
+
+
+    html +=
+
+        '<div class="task harvest">' +
+
+        '<strong>🧺 Estimated Harvest</strong>' +
+
+        formatDate(harvest) +
+
+        '<br>Harvest timing must be confirmed using crop maturity signs.' +
+
+        '</div>';
+
+
+    document.getElementById("tasks").innerHTML =
+        html;
+
+}
+
+</script>
+
+</body>
+</html>
