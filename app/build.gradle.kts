@@ -3,14 +3,28 @@ plugins {
 }
 
 android {
-    namespace = "com.naturlife.app"
-    compileSdk = 35
+    namespace = "com.example.naturelife"
+    compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.naturlife.app"
-        minSdk = 23
-        targetSdk = 35
+        applicationId = "com.example.naturelife"
+        minSdk = 24
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+}
+
+dependencies {
+    implementation("androidx.appcompat:appcompat:1.6.1")
 }
