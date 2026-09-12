@@ -80,6 +80,7 @@ background:#2e7d32;
 color:white;
 font-size:16px;
 font-weight:bold;
+cursor:pointer;
 }
 
 .task{
@@ -105,7 +106,7 @@ display:none;
 
 <div class="header">
 
-<img src="naturelife-logo.jpeg"
+<img src="naturlife_logo.jpeg"
 class="logo"
 onerror="this.style.display='none'">
 
@@ -251,30 +252,42 @@ this.value==="other"?"block":"none";
 
 function getLocation(){
 
+let locInput = document.getElementById("location");
+
 if(!navigator.geolocation){
-
-alert("GPS is not available.");
-
-return;
+    alert("GPS is not available on this device.");
+    return;
 }
+
+locInput.value = "Locating GPS...";
 
 navigator.geolocation.getCurrentPosition(
 
 function(position){
+    let lat = position.coords.latitude;
+    let lon = position.coords.longitude;
 
-document.getElementById("location").value=
-"GPS: "+
-position.coords.latitude.toFixed(5)+
-", "+
-position.coords.longitude.toFixed(5);
-
+    // OpenStreetMap Reverse Geocoding හරහා ප්‍රදේශයේ නම ලබා ගැනීම
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+        .then(response => response.json())
+        .then(data => {
+            let placeName = data.address.city || data.address.town || data.address.village || data.address.suburb || data.address.county;
+            if(placeName){
+                locInput.value = placeName + ` (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
+            } else {
+                locInput.value = `GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+            }
+        })
+        .catch(() => {
+            locInput.value = `GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+        });
 },
 
-function(){
-
-alert("GPS permission unavailable. Please enter location manually.");
-
-}
+function(error){
+    locInput.value = "";
+    alert("GPS access denied or location unavailable. Please enable Location/GPS in device settings.");
+},
+{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
 
 );
 
@@ -371,38 +384,38 @@ let html="";
 
 html+=`
 <div class="task">
-<strong>🌱 Planting Day</strong>
+<strong>🌱 Planting Day</strong><br>
 ${formatDate(start)}
 </div>`;
 
 html+=`
 <div class="task">
-<strong>💧 Water Management</strong>
+<strong>💧 Water Management</strong><br>
 Check soil moisture regularly.
 Prototype interval: every ${data.water} day(s).
 </div>`;
 
 html+=`
 <div class="task">
-<strong>🐛 Pest & Disease Check</strong>
+<strong>🐛 Pest & Disease Check</strong><br>
 First detailed check: ${formatDate(pest)}
 </div>`;
 
 html+=`
 <div class="task">
-<strong>🌿 Fertilizer Check</strong>
+<strong>🌿 Fertilizer Check</strong><br>
 Planned around ${formatDate(fertilizer)}
 </div>`;
 
 html+=`
 <div class="task">
-<strong>🌱 Crop Development Check</strong>
+<strong>🌱 Crop Development Check</strong><br>
 Review crop growth around ${formatDate(transplant)}
 </div>`;
 
 html+=`
 <div class="task harvest">
-<strong>🧺 Estimated Harvest</strong>
+<strong>🧺 Estimated Harvest</strong><br>
 ${formatDate(harvest)}
 <br>
 Confirm maturity before harvesting.
