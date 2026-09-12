@@ -1,40 +1,52 @@
-package com.example.naturelife;
+package com.example.naturelife
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.webkit.GeolocationPermissions
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
-public class MainActivity extends Activity {
-    private WebView webView;
+class MainActivity : AppCompatActivity() {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
-        // WebView එකක් code එකෙන්ම සාදා සෙට් කිරීම
-        webView = new WebView(this);
-        setContentView(webView);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        val webView = WebView(this)
+        setContentView(webView)
 
-        // WebView Settings
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setAllowFileAccess(true);
-
-        webView.setWebViewClient(new WebViewClient());
-
-        // assets/index.html එක load කිරීම
-        webView.loadUrl("file:///android_asset/index.html");
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (webView != null && webView.canGoBack()) {
-            webView.goBack();
-        } else {
-            super.onBackPressed();
+        // Location Permissions Request කිරීම
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
         }
+
+        webView.settings.javaScriptEnabled = true
+        webView.settings.domStorageEnabled = true
+        webView.settings.setGeolocationEnabled(true) // GPS Enable කිරීම
+
+        webView.webViewClient = WebViewClient()
+        
+        // WebView Location Popup Handlers
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onGeolocationPermissionsShowPrompt(
+                origin: String,
+                callback: GeolocationPermissions.Callback
+            ) {
+                callback.invoke(origin, true, false)
+            }
+        }
+
+        webView.loadUrl("file:///android_asset/index.html")
     }
 }
