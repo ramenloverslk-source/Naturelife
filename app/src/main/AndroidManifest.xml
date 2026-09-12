@@ -6,7 +6,7 @@
     <application
         android:allowBackup="true"
         android:label="Naturelife"
-        android:icon="@drawable/naturlife-logo"
+        android:icon="@drawable/naturlife_logo"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
         android:usesCleartextTraffic="true">
