@@ -214,6 +214,14 @@ placeholder="Enter village / town / district">
 
 </div>
 
+<!-- User Contact Card (Email Validation) -->
+<div class="card">
+<h2>📧 Farmer Contact</h2>
+<label>Email Address</label>
+<input type="email" id="userEmail" placeholder="example@gmail.com" oninput="validateEmail()">
+<span id="emailStatus" style="font-size: 13px; display: block; margin-top: 5px;"></span>
+</div>
+
 <div class="card">
 
 <h2>📅 Planting Information</h2>
@@ -299,6 +307,30 @@ document.getElementById("otherCrop").style.display=
 this.value==="other"?"block":"none";
 
 };
+
+function validateEmail() {
+    let emailInput = document.getElementById("userEmail");
+    let emailStatus = document.getElementById("emailStatus");
+    let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (emailInput.value.trim() === "") {
+        emailStatus.innerText = "";
+        emailInput.style.borderColor = "#ccc";
+        return true;
+    }
+
+    if (emailPattern.test(emailInput.value.trim())) {
+        emailStatus.innerText = "✓ Valid Email Format";
+        emailStatus.style.color = "#2e7d32";
+        emailInput.style.borderColor = "#2e7d32";
+        return true;
+    } else {
+        emailStatus.innerText = "✖ Invalid Email (e.g. name@domain.com)";
+        emailStatus.style.color = "#d32f2f";
+        emailInput.style.borderColor = "#d32f2f";
+        return false;
+    }
+}
 
 function getLocation(){
 
@@ -392,6 +424,12 @@ let key=document.getElementById("crop").value;
 let startValue=document.getElementById("plantingDate").value;
 let location=document.getElementById("location").value;
 let area=document.getElementById("area").value;
+let email=document.getElementById("userEmail").value.trim();
+
+if (!validateEmail()) {
+    alert("Please enter a valid Email address.");
+    return;
+}
 
 if(!key){
 alert("Please select a crop.");
@@ -427,6 +465,7 @@ document.getElementById("plan").style.display="block";
 document.getElementById("summary").innerHTML=
 "<b>🌱 Crop:</b> "+data.name+
 "<br><b>📍 Location:</b> "+(location||"Not added")+
+"<br><b>📧 Contact:</b> "+(email||"Not added")+
 "<br><b>📏 Land:</b> "+(area||"Not added")+
 "<br><b>📅 Planting:</b> "+formatDate(start)+
 "<br><br><b>🧺 Estimated Harvest:</b> "+
