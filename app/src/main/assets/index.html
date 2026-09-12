@@ -83,6 +83,37 @@ font-weight:bold;
 cursor:pointer;
 }
 
+.weather-box{
+background:#e8f5e9;
+border-radius:12px;
+padding:15px;
+margin-top:12px;
+border:1px solid #c8e6c9;
+display:none;
+}
+
+.weather-info{
+display:flex;
+justify-content:space-around;
+align-items:center;
+margin-top:8px;
+}
+
+.weather-item{
+text-align:center;
+}
+
+.weather-item span{
+display:block;
+font-size:14px;
+color:#555;
+}
+
+.weather-item strong{
+font-size:18px;
+color:#2e7d32;
+}
+
 .task{
 padding:14px;
 margin:10px 0;
@@ -153,7 +184,7 @@ style="display:none">
 
 <div class="card">
 
-<h2>📍 Farm Location</h2>
+<h2>📍 Farm Location & Weather</h2>
 
 <input id="location"
 placeholder="Enter village / town / district">
@@ -161,6 +192,25 @@ placeholder="Enter village / town / district">
 <button onclick="getLocation()">
 📍 Use My GPS Location
 </button>
+
+<!-- Weather Display Card -->
+<div id="weatherCard" class="weather-box">
+<h3 style="margin:0 0 10px 0; font-size:16px; color:#1b5e20;">🌤 Current Weather Condition</h3>
+<div class="weather-info">
+<div class="weather-item">
+<span>Temperature</span>
+<strong id="temp">-- °C</strong>
+</div>
+<div class="weather-item">
+<span>Wind Speed</span>
+<strong id="wind">-- km/h</strong>
+</div>
+<div class="weather-item">
+<span>Condition</span>
+<strong id="condition">--</strong>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -259,7 +309,7 @@ if(!navigator.geolocation){
     return;
 }
 
-locInput.value = "Locating GPS...";
+locInput.value = "Locating GPS & Weather...";
 
 navigator.geolocation.getCurrentPosition(
 
@@ -267,25 +317,28 @@ function(position){
     let lat = position.coords.latitude;
     let lon = position.coords.longitude;
 
-    // OpenStreetMap Reverse Geocoding හරහා ප්‍රදේශයේ නම ලබා ගැනීම
+    // Fetch Weather Data (Open-Meteo API)
+    fetchWeather(lat, lon);
+
+    // OpenStreetMap Reverse Geocoding
     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
         .then(response => response.json())
         .then(data => {
             let placeName = data.address.city || data.address.town || data.address.village || data.address.suburb || data.address.county;
             if(placeName){
-                locInput.value = placeName + ` (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
+                locInput.value = placeName + ` (${lat.toFixed(2)}, ${lon.toFixed(2)})`;
             } else {
-                locInput.value = `GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+                locInput.value = `GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
             }
         })
         .catch(() => {
-            locInput.value = `GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+            locInput.value = `GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
         });
 },
 
 function(error){
     locInput.value = "";
-    alert("GPS access denied or location unavailable. Please enable Location/GPS in device settings.");
+    alert("GPS access denied or location unavailable.");
 },
 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
 
@@ -293,86 +346,85 @@ function(error){
 
 }
 
+function fetchWeather(lat, lon) {
+    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+        .then(res => res.json())
+        .then(data => {
+            if(data.current_weather) {
+                let temp = data.current_weather.temperature;
+                let wind = data.current_weather.windspeed;
+                let code = data.current_weather.weathercode;
+
+                document.getElementById("temp").innerText = temp + " °C";
+                document.getElementById("wind").innerText = wind + " km/h";
+                document.getElementById("condition").innerText = getWeatherCondition(code);
+                document.getElementById("weatherCard").style.display = "block";
+            }
+        })
+        .catch(err => {
+            console.log("Weather fetch error:", err);
+        });
+}
+
+function getWeatherCondition(code) {
+    if(code === 0) return "Sunny ☀️";
+    if(code >= 1 && code <= 3) return "Partly Cloudy ⛅";
+    if(code >= 45 && code <= 48) return "Foggy 🌫";
+    if(code >= 51 && code <= 67) return "Rainy 🌧";
+    if(code >= 80 && code <= 82) return "Showers 🌦";
+    if(code >= 95) return "Thunderstorm 🌩";
+    return "Clear 🌤";
+}
+
 function addDays(date,days){
-
 let d=new Date(date);
-
 d.setDate(d.getDate()+days);
-
 return d;
-
 }
 
 function formatDate(date){
-
 return date.toLocaleDateString("en-GB");
-
 }
 
 function createPlan(){
 
 let key=document.getElementById("crop").value;
-
 let startValue=document.getElementById("plantingDate").value;
-
 let location=document.getElementById("location").value;
-
 let area=document.getElementById("area").value;
 
 if(!key){
-
 alert("Please select a crop.");
-
 return;
 }
 
 if(!startValue){
-
 alert("Please select planting date.");
-
 return;
 }
 
 let data;
 
 if(key==="other"){
-
 let name=document.getElementById("otherCrop").value;
-
 if(!name){
-
 alert("Please enter crop name.");
-
 return;
 }
-
-data={
-name:name,
-harvest:90,
-fertilizer:20,
-water:3
-};
-
+data={name:name,harvest:90,fertilizer:20,water:3};
 }else{
-
 data=crops[key];
-
 }
 
 let start=new Date(startValue);
-
 let harvest=addDays(start,data.harvest);
-
 let fertilizer=addDays(start,data.fertilizer);
-
 let pest=addDays(start,14);
-
 let transplant=addDays(start,25);
 
 document.getElementById("plan").style.display="block";
 
 document.getElementById("summary").innerHTML=
-
 "<b>🌱 Crop:</b> "+data.name+
 "<br><b>📍 Location:</b> "+(location||"Not added")+
 "<br><b>📏 Land:</b> "+(area||"Not added")+
