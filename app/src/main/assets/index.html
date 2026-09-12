@@ -19,12 +19,12 @@ color:#183b20;
 background:#2e7d32;
 color:white;
 text-align:center;
-padding:25px 15px;
+padding:20px 15px;
 }
 
 .logo{
-width:85px;
-height:85px;
+width:75px;
+height:75px;
 object-fit:contain;
 background:white;
 border-radius:50%;
@@ -32,50 +32,52 @@ padding:5px;
 }
 
 h1{
-margin:10px 0 5px;
-font-size:30px;
+margin:8px 0 4px;
+font-size:28px;
 }
 
 .container{
-padding:18px;
+padding:15px;
 max-width:600px;
 margin:auto;
 }
 
 .card{
 background:white;
-padding:20px;
-margin-bottom:16px;
-border-radius:18px;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
+padding:18px;
+margin-bottom:15px;
+border-radius:16px;
+box-shadow:0 4px 10px rgba(0,0,0,.06);
 }
 
 h2{
 margin-top:0;
-font-size:21px;
+font-size:20px;
+color:#2e7d32;
 }
 
 label{
 font-weight:bold;
 display:block;
-margin-top:12px;
+margin-top:10px;
+font-size:14px;
 }
 
 input,select{
 width:100%;
-padding:13px;
-margin-top:7px;
+padding:12px;
+margin-top:6px;
 border:1px solid #ccc;
 border-radius:10px;
-font-size:16px;
+font-size:15px;
 }
 
 button{
 width:100%;
-padding:15px;
-margin-top:12px;
+padding:14px;
+margin-top:10px;
 border:0;
-border-radius:12px;
+border-radius:10px;
 background:#2e7d32;
 color:white;
 font-size:16px;
@@ -83,20 +85,21 @@ font-weight:bold;
 cursor:pointer;
 }
 
+/* Weather Box Styles */
 .weather-box{
-background:#e8f5e9;
-border-radius:12px;
+background:linear-gradient(135deg, #a8e063, #56ab2f);
+color:white;
+border-radius:14px;
 padding:15px;
-margin-top:12px;
-border:1px solid #c8e6c9;
-display:none;
+margin-bottom:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
 }
 
 .weather-info{
 display:flex;
 justify-content:space-around;
 align-items:center;
-margin-top:8px;
+margin-top:10px;
 }
 
 .weather-item{
@@ -105,19 +108,28 @@ text-align:center;
 
 .weather-item span{
 display:block;
-font-size:14px;
-color:#555;
+font-size:13px;
+opacity:0.9;
 }
 
 .weather-item strong{
 font-size:18px;
-color:#2e7d32;
+}
+
+.guide-box{
+background:#f9fbf9;
+border-left:4px solid #2e7d32;
+padding:12px;
+margin:10px 0;
+border-radius:6px;
+font-size:14px;
+line-height:1.5;
 }
 
 .task{
 padding:14px;
 margin:10px 0;
-border-radius:12px;
+border-radius:10px;
 background:#eef7ed;
 border-left:5px solid #2e7d32;
 }
@@ -125,6 +137,18 @@ border-left:5px solid #2e7d32;
 .harvest{
 background:#fff8e1;
 border-left-color:#f9a825;
+}
+
+.profit-pos{
+color:#2e7d32;
+font-weight:bold;
+font-size:18px;
+}
+
+.profit-neg{
+color:#c62828;
+font-weight:bold;
+font-size:18px;
 }
 
 #plan{
@@ -143,39 +167,9 @@ display:none;
 
 <div class="container">
 
-<!-- Crop Selection -->
-<div class="card">
-<h2>🌱 Select Any Crop</h2>
-<select id="crop">
-<option value="">Select Crop</option>
-<option value="rice">Rice</option>
-<option value="chilli">Chilli</option>
-<option value="tomato">Tomato</option>
-<option value="brinjal">Brinjal</option>
-<option value="cabbage">Cabbage</option>
-<option value="carrot">Carrot</option>
-<option value="onion">Onion</option>
-<option value="ginger">Ginger</option>
-<option value="watermelon">Watermelon</option>
-<option value="cucumber">Cucumber</option>
-<option value="okra">Okra</option>
-<option value="kang kung">Kang Kung</option>
-<option value="maize">Maize</option>
-<option value="potato">Potato</option>
-<option value="microgreens">Microgreens</option>
-<option value="other">➕ Other Crop</option>
-</select>
-<input id="otherCrop" placeholder="Enter crop name" style="display:none">
-</div>
-
-<!-- Location & Weather -->
-<div class="card">
-<h2>📍 Farm Location & Weather</h2>
-<input id="location" placeholder="Enter village / town / district">
-<button onclick="getLocation()">📍 Use My GPS Location</button>
-
+<!-- 1. Weather Box Top -->
 <div id="weatherCard" class="weather-box">
-<h3 style="margin:0 0 10px 0; font-size:16px; color:#1b5e20;">🌤 Current Weather Condition</h3>
+<h3 style="margin:0; font-size:17px; text-align:center;">🌤 Current Weather Condition</h3>
 <div class="weather-info">
 <div class="weather-item">
 <span>Temperature</span>
@@ -187,18 +181,57 @@ display:none;
 </div>
 <div class="weather-item">
 <span>Condition</span>
-<strong id="condition">--</strong>
+<strong id="condition">GPS required</strong>
 </div>
 </div>
 </div>
+
+<!-- 2. Location Card -->
+<div class="card">
+<h2>📍 Farm Location</h2>
+<input id="location" placeholder="Enter village / town / district">
+<button onclick="getLocation()">📍 Use My GPS Location</button>
+</div>
+
+<!-- 3. Select Crop Card -->
+<div class="card">
+<h2>🌱 Select Any Crop</h2>
+<select id="crop">
+<option value="">Select Crop</option>
+<option value="rice">Rice (වී)</option>
+<option value="chilli">Chilli (මිරිස්)</option>
+<option value="tomato">Tomato (තක්කාලි)</option>
+<option value="brinjal">Brinjal (වම්බටු)</option>
+<option value="cabbage">Cabbage (ගෝවා)</option>
+<option value="carrot">Carrot (කැරට්)</option>
+<option value="onion">Onion (ලූණු)</option>
+<option value="ginger">Ginger (ඉඟුරු)</option>
+<option value="watermelon">Watermelon (පැණි කොමඩු)</option>
+<option value="cucumber">Cucumber (පිපිඤ්ඤා)</option>
+<option value="okra">Okra (බණ්ඩක්කා)</option>
+<option value="kang kung">Kang Kung (කංකුං)</option>
+<option value="maize">Maize (බඩඉරිඟු)</option>
+<option value="potato">Potato (අල)</option>
+<option value="microgreens">Microgreens</option>
+<option value="other">➕ Other Crop</option>
+</select>
+<input id="otherCrop" placeholder="Enter crop name" style="display:none">
+</div>
+
+<!-- 4. Farmer Email Card -->
+<div class="card">
+<h2>📧 Farmer Contact</h2>
+<label>Email Address</label>
+<input type="email" id="userEmail" placeholder="example@gmail.com" oninput="validateEmail()">
+<span id="emailStatus" style="font-size: 13px; display: block; margin-top: 5px;"></span>
 </div>
 
 <!-- AI Instructor Section -->
 <div class="card" style="border: 2px solid #2e7d32; background: #f4faf4;">
   <h2>🤖 Naturelife AI Instructor</h2>
-  <p style="font-size:14px; color:#555; margin-top:0;">ඔබේ වගාවට අදාළ ඕනෑම ගැටලුවක් මෙතැනින් අසන්න.</p>
+  <p style="font-size:13px; color:#555; margin-top:0;">ඔබේ වගාවට අදාළ ඕනෑම ගැටලුවක් මෙතැනින් අසන්න.</p>
   
-  <div id="chatHistory" style="max-height: 200px; overflow-y: auto; background: white; padding: 10px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; font-size: 14px;">
+  <div id="chatHistory" style="max-height: 180px; overflow-y: auto; background: white; padding: 10px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; font-size: 14px;">
     <div style="color: #2e7d32; margin-bottom: 8px;"><b>AI Instructor:</b> ආයුබෝවන්! මම Naturelife AI ගොවිතැන් උපදේශක. ඔබේ වගාව පිළිබඳ ප්‍රශ්න සිංහලෙන් අසන්න! 🌱</div>
   </div>
 
@@ -208,59 +241,162 @@ display:none;
   </div>
 </div>
 
-<!-- User Contact Card -->
-<div class="card">
-<h2>📧 Farmer Contact</h2>
-<label>Email Address</label>
-<input type="email" id="userEmail" placeholder="example@gmail.com" oninput="validateEmail()">
-<span id="emailStatus" style="font-size: 13px; display: block; margin-top: 5px;"></span>
-</div>
-
-<!-- Planting Info -->
+<!-- Planting Info Input -->
 <div class="card">
 <h2>📅 Planting Information</h2>
 <label>Planting / Seeding Date</label>
 <input type="date" id="plantingDate">
 <label>Land Area</label>
-<input type="text" id="area" placeholder="Example: 1 acre">
-<button onclick="createPlan()">🌱 Create Smart Crop Plan</button>
+<input type="text" id="area" placeholder="Example: 1 acre / 20 perch">
+<button onclick="createPlan()">🌱 Generate Full Farming Plan</button>
 </div>
 
 <!-- Output Plan -->
 <div id="plan">
 <div class="card">
-<h2>📋 Naturelife Crop Plan</h2>
+<h2>📋 Naturelife Crop Summary</h2>
 <p id="summary"></p>
 </div>
+
+<!-- Agriculture Guide Sections -->
 <div class="card">
-<h2>📅 Farming Timeline</h2>
+<h2>🐛 Pest & Disease Control (කෘමි හා රෝග පාලනය)</h2>
+<div id="pestGuide" class="guide-box"></div>
+</div>
+
+<div class="card">
+<h2>🌿 Fertilizer Management (පොහොර කළමනාකරණය)</h2>
+<div id="fertilizerGuide" class="guide-box"></div>
+</div>
+
+<div class="card">
+<h2>💧 Water Management (ජල කළමනාකරණය)</h2>
+<div id="waterGuide" class="guide-box"></div>
+</div>
+
+<!-- Income & Expense Calculation -->
+<div class="card">
+<h2>💰 Income & Expense Calculator (ආදායම් වියදම් ගණකය)</h2>
+<label>ඇස්තමේන්තුගත සම්පූර්ණ වියදම (LKR)</label>
+<input type="number" id="expCost" placeholder="ලෑස්ති කිරීම්, බීජ, පොහොර, කම්කරු වියදම්" oninput="calcFinance()">
+
+<label>අපේක්ෂිත අස්වැන්න (Kg / Units)</label>
+<input type="number" id="expYield" placeholder="උදා: 1000" oninput="calcFinance()">
+
+<label>1Kg / Unit එකක වෙළඳපොළ මිල (LKR)</label>
+<input type="number" id="unitPrice" placeholder="උදා: 250" oninput="calcFinance()">
+
+<div style="margin-top:15px; padding:12px; background:#e8f5e9; border-radius:10px;">
+<p style="margin:4px 0;"><b>ගණනය කළ මුළු ආදායම:</b> LKR <span id="totalIncome">0</span></p>
+<p style="margin:4px 0;"><b>අපේක්ෂිත ශුද්ධ ලාභය/අලභය:</b> <span id="netProfit" class="profit-pos">LKR 0</span></p>
+</div>
+</div>
+
+<div class="card">
+<h2>📅 Complete Farming Timeline</h2>
 <div id="tasks"></div>
 </div>
+
 </div>
 
 </div>
 
 <script>
 
-// ⚠️ Google AI Studio එකෙන් ගත් API Key එක මෙතැනට Paste කරන්න
+// Gemini API Key එක මෙතැනට දාන්න
 const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
 
 const crops={
-rice:{name:"Rice",harvest:120,fertilizer:20,water:7},
-chilli:{name:"Chilli",harvest:90,fertilizer:20,water:3},
-tomato:{name:"Tomato",harvest:75,fertilizer:15,water:2},
-brinjal:{name:"Brinjal",harvest:80,fertilizer:15,water:3},
-cabbage:{name:"Cabbage",harvest:70,fertilizer:20,water:2},
-carrot:{name:"Carrot",harvest:75,fertilizer:20,water:3},
-onion:{name:"Onion",harvest:100,fertilizer:20,water:4},
-ginger:{name:"Ginger",harvest:240,fertilizer:30,water:4},
-watermelon:{name:"Watermelon",harvest:80,fertilizer:20,water:2},
-cucumber:{name:"Cucumber",harvest:60,fertilizer:15,water:2},
-okra:{name:"Okra",harvest:60,fertilizer:20,water:3},
-beans:{name:"Kang Kung",harvest:55,fertilizer:15,water:2},
-maize:{name:"Maize",harvest:100,fertilizer:25,water:5},
-potato:{name:"Potato",harvest:90,fertilizer:20,water:4},
-microgreens:{name:"Microgreens",harvest:10,fertilizer:5,water:1}
+rice:{
+  name:"Rice (වී)",harvest:120,fertilizer:20,water:3,
+  pest:"මැස්සන්, කොළ පාළුව සහ ගොක් මැස්සා සඳහා නිර්දේශිත කෘමිනාශක හෝ කොහොඹ නිසාරකය යොදන්න.",
+  fertilizer:"අස්වැන්න වැඩි කර ගැනීමට යූරියා, TSP සහ MOP පොහොර අදියර 3 කින් (දින 14, 45, 65) යොදන්න.",
+  water:"වගා කාලයෙන් මුල් දින 70 දී පස තෙතමනය සහිතව තබන්න. අස්වැන්න නෙලීමට දින 14 කට පෙර ජලය සිඳුවන්න."
+},
+chilli:{
+  name:"Chilli (මිරිස්)",harvest:90,fertilizer:15,water:2,
+  pest:"කොළ කුඩාවීම (Kukula disease) සහ පෙන්සිල් කොළ රෝග සඳහා සල්ෆර් හෝ නියමිත කෘමිනාශක යොදන්න.",
+  fertilizer:"කොම්පෝස්ට් මුලින්ම යොදන්න. පසුව නයිට්‍රජන් හා පොටෑසියම් පොහොර සති 2 කට වරක් යොදන්න.",
+  water:"පස තෙතමනය සහිතව තබන්න. වැඩිපුර වතුර පිරීමෙන් මුල් කුණු විය හැක."
+},
+tomato:{
+  name:"Tomato (තක්කාලි)",harvest:75,fertilizer:15,water:2,
+  pest:"පිටි මකුණා, පිටිපසුරු සහ කොළ පාලුව රෝගයට තඹ පාදක දිලීර නාශක යොදන්න.",
+  fertilizer:"කැල්සියම් සහ මැග්නීසියම් සහිත පොහොර යෙදීමෙන් ගෙඩි පැලීම වැළැක්විය හැක.",
+  water:"මල් හටගන්නා කාලයේ නිසි ලෙස සතිපතා සමානව ජලය සපයන්න."
+},
+brinjal:{
+  name:"Brinjal (වම්බටු)",harvest:80,fertilizer:15,water:3,
+  pest:"කරටි සහ ගෙඩි විදින පණුවා පාලනයට නිසි කෘමිනාශක හෝ කාබනික කෘමි විකර්ශක භාවිතා කරන්න.",
+  fertilizer:"බෝගය වැවෙන විට නයිට්‍රජන් අධික පොහොර ද, මල් හටගන්නා විට පොටෑසියම් ද යොදන්න.",
+  water:"සති 2 කට වරක් පස හොඳින් තෙමෙන සේ වතුර දමන්න."
+},
+cabbage:{
+  name:"Cabbage (ගෝවා)",harvest:70,fertilizer:20,water:2,
+  pest:"ගෝවා පණුවා සහ දඹයන්ගෙන් ආරක්ෂා වීමට කාබනික හෝ නිර්දේශිත පළිබෝධනාශක යොදන්න.",
+  fertilizer:"නයිට්‍රජන් සපයන පොහොර ගෝවා ගෙඩිය බැඳෙන කාලය වන තෙක් යොදන්න.",
+  water:"පස නිරන්තරයෙන් තෙතමනය සහිතව තබා ගැනීම ගෙඩිය සවිමත් වීමට උපකාරී වේ."
+},
+carrot:{
+  name:"Carrot (කැරට්)",harvest:75,fertilizer:20,water:3,
+  pest:"මුල් පණුවන් හා කොළ අළු රෝගය සඳහා සුදුසු දිලීර නාශක යොදන්න.",
+  fertilizer:"පොටෑසියම් හා පොස්පරස් වැඩි පොහොර අල සෑදෙන කාලයට ඉතා සුදුසුයි.",
+  water:"පස මතුපිට වියලීමට නොදී නිරන්තරයෙන් සැහැල්ලුවෙන් වතුර දමන්න."
+},
+onion:{
+  name:"Onion (ලූණු)",harvest:100,fertilizer:20,water:4,
+  pest:"ත්‍රිප්ස් සහ අළු රෝගය පාලනය සඳහා බෝග මාරුව සහ දිලීර නාශක යොදන්න.",
+  fertilizer:"අල විශාල වීමට පොටෑසියම් අධික පොහොර අදියර 2 කදී යොදන්න.",
+  water:"අල පැසෙන අවසාන කාලයේදී ජලය සැපයීම සම්පූර්ණයෙන්ම නවත්වන්න."
+},
+ginger:{
+  name:"Ginger (ඉඟුරු)",harvest:240,fertilizer:30,water:4,
+  pest:"ඉඟුරු අල කුණු වීමේ රෝගයට (Soft rot) ට්‍රයිකොඩර්මා හෝ තඹ දිලීර නාශක යොදන්න.",
+  fertilizer:"කාබනික පොහොර හා කොම්පෝස්ට් විශාල වශයෙන් මුලින්ම පසට එකතු කරන්න.",
+  water:"පස නිරන්තර තෙතමනය සහිතව තබන්න, නමුත් ජලය රැඳී සිටීමට ඉඩ නොදෙන්න."
+},
+watermelon:{
+  name:"Watermelon (පැණි කොමඩු)",harvest:80,fertilizer:20,water:2,
+  pest:"පිටි මකුණන් සහ මැස්සන් පාලනයට කෘමිනාශක හෝ ඇලෙන සුළු පුවරු (Sticky traps) භාවිතා කරන්න.",
+  fertilizer:"මල් පිපෙන විට පොස්පරස් සහ ගෙඩි වැඩෙන විට පොටෑසියම් යොදන්න.",
+  water:"ගෙඩි පැසෙන අවසාන සති 2 දී ජලය දීම අඩු කරන්න (පැණිරස වැඩි වීමට)."
+},
+cucumber:{
+  name:"Cucumber (පිපිඤ්ඤා)",harvest:60,fertilizer:15,water:2,
+  pest:"පිටි අළු රෝගය සහ කොළ මැස්සන් සඳහා සුදුසු කෘමිනාශක භාවිතා කරන්න.",
+  fertilizer:"සති දෙකකට වරක් දියර පොහොර හෝ කොම්පෝස්ට් යොදන්න.",
+  water:"දිනපතා උදෑසන කාලයේ වතුර දැමීම යෝග්‍ය වේ."
+},
+okra:{
+  name:"Okra (බණ්ඩක්කා)",harvest:60,fertilizer:20,water:3,
+  pest:"කොළ කහවීමේ වෛරස් රෝගය පාලනයට මැස්සන් මර්දනය කරන්න.",
+  fertilizer:"නයිට්‍රජන් හා පොස්පරස් පොහොර අස්වැන්න කැඩීමට පෙර යොදන්න.",
+  water:"දින 2-3 කට වරක් ජලය සම්පූර්ණයෙන්ම පසට ලැබෙන සේ යොදන්න."
+},
+kang_kung:{
+  name:"Kang Kung (කංකුං)",harvest:35,fertilizer:10,water:1,
+  pest:"කොළ කන පණුවන් පාලනයට කොහොඹ තෙල් ද්‍රාවණය යොදන්න.",
+  fertilizer:"නයිට්‍රජන් අධික යූරියා හෝ කාබනික පොහොර යෙදීමෙන් ශාක වේගයෙන් වැඩේ.",
+  water:"දිනපතා ඡල සම්පාදනය අවශ්‍ය වේ."
+},
+maize:{
+  name:"Maize (බඩඉරිඟු)",harvest:100,fertilizer:25,water:5,
+  pest:"සේනා පණුවා (Fall armyworm) මර්දනයට සේනා නාශක හෝ ජෛව පාලන ක්‍රම යොදන්න.",
+  fertilizer:"ගස වැඩෙන විට යූරියා පොහොර පේළි අතර යොදන්න.",
+  water:"කරල් එන කාලයේ හා පරාගණය වන කාලයේදී ජලය අත්‍යවශ්‍ය වේ."
+},
+potato:{
+  name:"Potato (අල)",harvest:90,fertilizer:20,water:4,
+  pest:"අල පාළුව රෝගය සඳහා දිලීර නාශක නියමිත වේලාවට යොදන්න.",
+  fertilizer:"පොටෑසියම් සහ පොස්පරස් පොහොර අල සෑදීම උත්තේජනය කරයි.",
+  water:"පස වියලීමට නොදී සතියකට වරක් තෙත් කරන්න."
+},
+microgreens:{
+  name:"Microgreens",harvest:10,fertilizer:5,water:1,
+  pest:"දිලීර කුණු වීම් වලින් බේරීමට වාතාශ්‍රය හොඳින් පවත්වා ගන්න.",
+  fertilizer:"අමතර රසායනික පොහොර අවශ්‍ය නැත. පසෙහි සාරවත් බව ප්‍රමාණවත්ය.",
+  water:"ස්ප්‍රේ එකක් මගින් දිනපතා සැහැල්ලුවෙන් වතුර ඉසින්න."
+}
 };
 
 document.getElementById("crop").onchange=function(){
@@ -268,7 +404,7 @@ document.getElementById("otherCrop").style.display=
 this.value==="other"?"block":"none";
 };
 
-// AI Instructor Function (Gemini API Integration)
+// AI Instructor
 async function askAI() {
     let inputField = document.getElementById("aiQuestion");
     let userQuery = inputField.value.trim();
@@ -282,10 +418,9 @@ async function askAI() {
 
     let loadingId = "loading_" + Date.now();
     chatHistory.innerHTML += `<div id="${loadingId}" style="color: #888; margin-bottom: 8px;"><i>AI Instructor පිළිතුර සොයමින් පවතියි... 🌿</i></div>`;
-    chatHistory.scrollTop = chatHistory.scrollHeight;
 
     try {
-        let systemPrompt = "You are Naturelife AI, an expert agriculture instructor in Sri Lanka. Answer clearly, politely, and concisely in Sinhala (or English if asked) with practical farming advice.";
+        let systemPrompt = "You are Naturelife AI, an expert agriculture instructor in Sri Lanka. Answer clearly, politely, and concisely in Sinhala with practical farming advice.";
 
         let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
             method: "POST",
@@ -308,17 +443,16 @@ async function askAI() {
             reply = reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
             chatHistory.innerHTML += `<div style="color: #2e7d32; margin-bottom: 8px;"><b>AI Instructor:</b><br>${reply}</div>`;
         } else {
-            chatHistory.innerHTML += `<div style="color: #d32f2f; margin-bottom: 8px;"><b>System:</b> පිළිතුර ලබා ගැනීමට නොහැකි විය. API Key පරීක්ෂා කරන්න.</div>`;
+            chatHistory.innerHTML += `<div style="color: #d32f2f; margin-bottom: 8px;"><b>System:</b> පිළිතුර ලබා ගැනීමට නොහැකි විය.</div>`;
         }
     } catch (error) {
         if(document.getElementById(loadingId)) document.getElementById(loadingId).remove();
-        chatHistory.innerHTML += `<div style="color: #d32f2f; margin-bottom: 8px;"><b>System:</b> Connection Error! Internet සම්බන්ධතාවය පරීක්ෂා කරන්න.</div>`;
+        chatHistory.innerHTML += `<div style="color: #d32f2f; margin-bottom: 8px;"><b>System:</b> Connection Error!</div>`;
     }
 
     chatHistory.scrollTop = chatHistory.scrollHeight;
 }
 
-// Email Validation
 function validateEmail() {
     let emailInput = document.getElementById("userEmail");
     let emailStatus = document.getElementById("emailStatus");
@@ -343,7 +477,6 @@ function validateEmail() {
     }
 }
 
-// Location and Weather
 function getLocation(){
 let locInput = document.getElementById("location");
 if(!navigator.geolocation){
@@ -393,7 +526,6 @@ function fetchWeather(lat, lon) {
                 document.getElementById("temp").innerText = temp + " °C";
                 document.getElementById("wind").innerText = wind + " km/h";
                 document.getElementById("condition").innerText = getWeatherCondition(code);
-                document.getElementById("weatherCard").style.display = "block";
             }
         });
 }
@@ -408,6 +540,26 @@ function getWeatherCondition(code) {
     return "Clear 🌤";
 }
 
+function calcFinance(){
+    let cost = parseFloat(document.getElementById("expCost").value) || 0;
+    let yieldQty = parseFloat(document.getElementById("expYield").value) || 0;
+    let price = parseFloat(document.getElementById("unitPrice").value) || 0;
+
+    let totalIncome = yieldQty * price;
+    let profit = totalIncome - cost;
+
+    document.getElementById("totalIncome").innerText = totalIncome.toLocaleString();
+    let profitEl = document.getElementById("netProfit");
+
+    if(profit >= 0){
+        profitEl.innerText = "LKR " + profit.toLocaleString() + " (ලාභයි 🟢)";
+        profitEl.className = "profit-pos";
+    } else {
+        profitEl.innerText = "LKR " + Math.abs(profit).toLocaleString() + " (අලාභයි 🔴)";
+        profitEl.className = "profit-neg";
+    }
+}
+
 function addDays(date,days){
 let d=new Date(date);
 d.setDate(d.getDate()+days);
@@ -418,7 +570,6 @@ function formatDate(date){
 return date.toLocaleDateString("en-GB");
 }
 
-// Smart Crop Plan Generator
 function createPlan(){
 let key=document.getElementById("crop").value;
 let startValue=document.getElementById("plantingDate").value;
@@ -448,7 +599,12 @@ if(!name){
 alert("Please enter crop name.");
 return;
 }
-data={name:name,harvest:90,fertilizer:20,water:3};
+data={
+    name:name,harvest:90,fertilizer:20,water:3,
+    pest:"සාමාන්‍ය කෘමිනාශක හෝ කොහොඹ නිසාරකය භාවිතයෙන් පාලනය කරන්න.",
+    fertilizer:"සති 3 කට වරක් කොම්පෝස්ට් හෝ සංයුක්ත පොහොර යොදන්න.",
+    water:"පසෙහි තෙතමනය අනුව දින 2-3 කට වරක් ජලය සපයන්න."
+};
 }else{
 data=crops[key];
 }
@@ -470,12 +626,16 @@ document.getElementById("summary").innerHTML=
 "<br><br><b>🧺 Estimated Harvest:</b> "+
 formatDate(harvest);
 
+document.getElementById("pestGuide").innerText = data.pest;
+document.getElementById("fertilizerGuide").innerText = data.fertilizer;
+document.getElementById("waterGuide").innerText = data.water;
+
 let html="";
 html+=`<div class="task"><strong>🌱 Planting Day</strong><br>${formatDate(start)}</div>`;
-html+=`<div class="task"><strong>💧 Water Management</strong><br>Check soil moisture regularly. Prototype interval: every ${data.water} day(s).</div>`;
-html+=`<div class="task"><strong>🐛 Pest & Disease Check</strong><br>First detailed check: ${formatDate(pest)}</div>`;
-html+=`<div class="task"><strong>🌿 Fertilizer Check</strong><br>Planned around ${formatDate(fertilizer)}</div>`;
-html+=`<div class="task"><strong>🌱 Crop Development Check</strong><br>Review crop growth around ${formatDate(transplant)}</div>`;
+html+=`<div class="task"><strong>💧 Water Management</strong><br>Check soil moisture regularly. Interval: every ${data.water} day(s).</div>`;
+html+=`<div class="task"><strong>🐛 Pest Check</strong><br>First check around: ${formatDate(pest)}</div>`;
+html+=`<div class="task"><strong>🌿 Fertilizer Application</strong><br>Planned around: ${formatDate(fertilizer)}</div>`;
+html+=`<div class="task"><strong>🌱 Crop Growth Review</strong><br>Review development around: ${formatDate(transplant)}</div>`;
 html+=`<div class="task harvest"><strong>🧺 Estimated Harvest</strong><br>${formatDate(harvest)}<br>Confirm maturity before harvesting.</div>`;
 
 document.getElementById("tasks").innerHTML=html;
