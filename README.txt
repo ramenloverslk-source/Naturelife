@@ -1,6 +1,6 @@
-NATURLIFE ANDROID PROJECT — v1.0
+NATURELIFE ANDROID PROJECT — v1.0
 
-This is an Android Studio project that packages the current Naturlife prototype into a native Android WebView app.
+This is an Android Studio project that packages the current Naturelife prototype into a native Android WebView app.
 
 Included:
 - User's Naturelife logo
