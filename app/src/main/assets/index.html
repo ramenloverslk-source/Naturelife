@@ -136,27 +136,18 @@ display:none;
 <body>
 
 <div class="header">
-
-<img src="naturlife_logo.jpeg"
-class="logo"
-onerror="this.style.display='none'">
-
+<img src="naturlife_logo.jpeg" class="logo" onerror="this.style.display='none'">
 <h1>Naturelife</h1>
-
 <p>Smart Agriculture Guide 🌱</p>
-
 </div>
 
 <div class="container">
 
+<!-- Crop Selection -->
 <div class="card">
-
 <h2>🌱 Select Any Crop</h2>
-
 <select id="crop">
-
 <option value="">Select Crop</option>
-
 <option value="rice">Rice</option>
 <option value="chilli">Chilli</option>
 <option value="tomato">Tomato</option>
@@ -173,27 +164,16 @@ onerror="this.style.display='none'">
 <option value="potato">Potato</option>
 <option value="microgreens">Microgreens</option>
 <option value="other">➕ Other Crop</option>
-
 </select>
-
-<input id="otherCrop"
-placeholder="Enter crop name"
-style="display:none">
-
+<input id="otherCrop" placeholder="Enter crop name" style="display:none">
 </div>
 
+<!-- Location & Weather -->
 <div class="card">
-
 <h2>📍 Farm Location & Weather</h2>
+<input id="location" placeholder="Enter village / town / district">
+<button onclick="getLocation()">📍 Use My GPS Location</button>
 
-<input id="location"
-placeholder="Enter village / town / district">
-
-<button onclick="getLocation()">
-📍 Use My GPS Location
-</button>
-
-<!-- Weather Display Card -->
 <div id="weatherCard" class="weather-box">
 <h3 style="margin:0 0 10px 0; font-size:16px; color:#1b5e20;">🌤 Current Weather Condition</h3>
 <div class="weather-info">
@@ -211,10 +191,24 @@ placeholder="Enter village / town / district">
 </div>
 </div>
 </div>
-
 </div>
 
-<!-- User Contact Card (Email Validation) -->
+<!-- AI Instructor Section -->
+<div class="card" style="border: 2px solid #2e7d32; background: #f4faf4;">
+  <h2>🤖 Naturelife AI Instructor</h2>
+  <p style="font-size:14px; color:#555; margin-top:0;">ඔබේ වගාවට අදාළ ඕනෑම ගැටලුවක් මෙතැනින් අසන්න.</p>
+  
+  <div id="chatHistory" style="max-height: 200px; overflow-y: auto; background: white; padding: 10px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; font-size: 14px;">
+    <div style="color: #2e7d32; margin-bottom: 8px;"><b>AI Instructor:</b> ආයුබෝවන්! මම Naturelife AI ගොවිතැන් උපදේශක. ඔබේ වගාව පිළිබඳ ප්‍රශ්න සිංහලෙන් අසන්න! 🌱</div>
+  </div>
+
+  <div style="display: flex; gap: 8px;">
+    <input type="text" id="aiQuestion" placeholder="උදා: තක්කාලි කොළ කහ පාට වෙන්නේ ඇයි?" style="margin-top:0;">
+    <button onclick="askAI()" style="width: 35%; margin-top:0; background: #1b5e20;">Ask AI</button>
+  </div>
+</div>
+
+<!-- User Contact Card -->
 <div class="card">
 <h2>📧 Farmer Contact</h2>
 <label>Email Address</label>
@@ -222,92 +216,109 @@ placeholder="Enter village / town / district">
 <span id="emailStatus" style="font-size: 13px; display: block; margin-top: 5px;"></span>
 </div>
 
+<!-- Planting Info -->
 <div class="card">
-
 <h2>📅 Planting Information</h2>
-
 <label>Planting / Seeding Date</label>
-
 <input type="date" id="plantingDate">
-
 <label>Land Area</label>
-
-<input
-type="text"
-id="area"
-placeholder="Example: 1 acre">
-
-<button onclick="createPlan()">
-🌱 Create Smart Crop Plan
-</button>
-
+<input type="text" id="area" placeholder="Example: 1 acre">
+<button onclick="createPlan()">🌱 Create Smart Crop Plan</button>
 </div>
 
+<!-- Output Plan -->
 <div id="plan">
-
 <div class="card">
-
 <h2>📋 Naturelife Crop Plan</h2>
-
 <p id="summary"></p>
-
 </div>
-
 <div class="card">
-
 <h2>📅 Farming Timeline</h2>
-
 <div id="tasks"></div>
-
 </div>
-
 </div>
 
 </div>
 
 <script>
 
+// ⚠️ Google AI Studio එකෙන් ගත් API Key එක මෙතැනට Paste කරන්න
+const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+
 const crops={
-
 rice:{name:"Rice",harvest:120,fertilizer:20,water:7},
-
 chilli:{name:"Chilli",harvest:90,fertilizer:20,water:3},
-
 tomato:{name:"Tomato",harvest:75,fertilizer:15,water:2},
-
 brinjal:{name:"Brinjal",harvest:80,fertilizer:15,water:3},
-
 cabbage:{name:"Cabbage",harvest:70,fertilizer:20,water:2},
-
 carrot:{name:"Carrot",harvest:75,fertilizer:20,water:3},
-
 onion:{name:"Onion",harvest:100,fertilizer:20,water:4},
-
 ginger:{name:"Ginger",harvest:240,fertilizer:30,water:4},
-
 watermelon:{name:"Watermelon",harvest:80,fertilizer:20,water:2},
-
 cucumber:{name:"Cucumber",harvest:60,fertilizer:15,water:2},
-
 okra:{name:"Okra",harvest:60,fertilizer:20,water:3},
-
 beans:{name:"Kang Kung",harvest:55,fertilizer:15,water:2},
-
 maize:{name:"Maize",harvest:100,fertilizer:25,water:5},
-
 potato:{name:"Potato",harvest:90,fertilizer:20,water:4},
-
 microgreens:{name:"Microgreens",harvest:10,fertilizer:5,water:1}
-
 };
 
 document.getElementById("crop").onchange=function(){
-
 document.getElementById("otherCrop").style.display=
 this.value==="other"?"block":"none";
-
 };
 
+// AI Instructor Function (Gemini API Integration)
+async function askAI() {
+    let inputField = document.getElementById("aiQuestion");
+    let userQuery = inputField.value.trim();
+    let chatHistory = document.getElementById("chatHistory");
+
+    if (!userQuery) return;
+
+    chatHistory.innerHTML += `<div style="text-align: right; margin-bottom: 8px; color: #1565c0;"><b>You:</b> ${userQuery}</div>`;
+    inputField.value = "";
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+    let loadingId = "loading_" + Date.now();
+    chatHistory.innerHTML += `<div id="${loadingId}" style="color: #888; margin-bottom: 8px;"><i>AI Instructor පිළිතුර සොයමින් පවතියි... 🌿</i></div>`;
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+    try {
+        let systemPrompt = "You are Naturelife AI, an expert agriculture instructor in Sri Lanka. Answer clearly, politely, and concisely in Sinhala (or English if asked) with practical farming advice.";
+
+        let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [
+                        { text: systemPrompt },
+                        { text: userQuery }
+                    ]
+                }]
+            })
+        });
+
+        let data = await response.json();
+        document.getElementById(loadingId).remove();
+
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+            let reply = data.candidates[0].content.parts[0].text;
+            reply = reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+            chatHistory.innerHTML += `<div style="color: #2e7d32; margin-bottom: 8px;"><b>AI Instructor:</b><br>${reply}</div>`;
+        } else {
+            chatHistory.innerHTML += `<div style="color: #d32f2f; margin-bottom: 8px;"><b>System:</b> පිළිතුර ලබා ගැනීමට නොහැකි විය. API Key පරීක්ෂා කරන්න.</div>`;
+        }
+    } catch (error) {
+        if(document.getElementById(loadingId)) document.getElementById(loadingId).remove();
+        chatHistory.innerHTML += `<div style="color: #d32f2f; margin-bottom: 8px;"><b>System:</b> Connection Error! Internet සම්බන්ධතාවය පරීක්ෂා කරන්න.</div>`;
+    }
+
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+}
+
+// Email Validation
 function validateEmail() {
     let emailInput = document.getElementById("userEmail");
     let emailStatus = document.getElementById("emailStatus");
@@ -332,27 +343,22 @@ function validateEmail() {
     }
 }
 
+// Location and Weather
 function getLocation(){
-
 let locInput = document.getElementById("location");
-
 if(!navigator.geolocation){
     alert("GPS is not available on this device.");
     return;
 }
-
 locInput.value = "Locating GPS & Weather...";
 
 navigator.geolocation.getCurrentPosition(
-
 function(position){
     let lat = position.coords.latitude;
     let lon = position.coords.longitude;
 
-    // Fetch Weather Data (Open-Meteo API)
     fetchWeather(lat, lon);
 
-    // OpenStreetMap Reverse Geocoding
     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
         .then(response => response.json())
         .then(data => {
@@ -367,15 +373,12 @@ function(position){
             locInput.value = `GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
         });
 },
-
 function(error){
     locInput.value = "";
     alert("GPS access denied or location unavailable.");
 },
 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-
 );
-
 }
 
 function fetchWeather(lat, lon) {
@@ -392,9 +395,6 @@ function fetchWeather(lat, lon) {
                 document.getElementById("condition").innerText = getWeatherCondition(code);
                 document.getElementById("weatherCard").style.display = "block";
             }
-        })
-        .catch(err => {
-            console.log("Weather fetch error:", err);
         });
 }
 
@@ -418,8 +418,8 @@ function formatDate(date){
 return date.toLocaleDateString("en-GB");
 }
 
+// Smart Crop Plan Generator
 function createPlan(){
-
 let key=document.getElementById("crop").value;
 let startValue=document.getElementById("plantingDate").value;
 let location=document.getElementById("location").value;
@@ -442,7 +442,6 @@ return;
 }
 
 let data;
-
 if(key==="other"){
 let name=document.getElementById("otherCrop").value;
 if(!name){
@@ -472,48 +471,14 @@ document.getElementById("summary").innerHTML=
 formatDate(harvest);
 
 let html="";
-
-html+=`
-<div class="task">
-<strong>🌱 Planting Day</strong><br>
-${formatDate(start)}
-</div>`;
-
-html+=`
-<div class="task">
-<strong>💧 Water Management</strong><br>
-Check soil moisture regularly.
-Prototype interval: every ${data.water} day(s).
-</div>`;
-
-html+=`
-<div class="task">
-<strong>🐛 Pest & Disease Check</strong><br>
-First detailed check: ${formatDate(pest)}
-</div>`;
-
-html+=`
-<div class="task">
-<strong>🌿 Fertilizer Check</strong><br>
-Planned around ${formatDate(fertilizer)}
-</div>`;
-
-html+=`
-<div class="task">
-<strong>🌱 Crop Development Check</strong><br>
-Review crop growth around ${formatDate(transplant)}
-</div>`;
-
-html+=`
-<div class="task harvest">
-<strong>🧺 Estimated Harvest</strong><br>
-${formatDate(harvest)}
-<br>
-Confirm maturity before harvesting.
-</div>`;
+html+=`<div class="task"><strong>🌱 Planting Day</strong><br>${formatDate(start)}</div>`;
+html+=`<div class="task"><strong>💧 Water Management</strong><br>Check soil moisture regularly. Prototype interval: every ${data.water} day(s).</div>`;
+html+=`<div class="task"><strong>🐛 Pest & Disease Check</strong><br>First detailed check: ${formatDate(pest)}</div>`;
+html+=`<div class="task"><strong>🌿 Fertilizer Check</strong><br>Planned around ${formatDate(fertilizer)}</div>`;
+html+=`<div class="task"><strong>🌱 Crop Development Check</strong><br>Review crop growth around ${formatDate(transplant)}</div>`;
+html+=`<div class="task harvest"><strong>🧺 Estimated Harvest</strong><br>${formatDate(harvest)}<br>Confirm maturity before harvesting.</div>`;
 
 document.getElementById("tasks").innerHTML=html;
-
 }
 
 </script>
